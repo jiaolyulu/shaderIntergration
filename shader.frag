@@ -1,11 +1,6 @@
 #ifdef GL_ES
 precision mediump float;
 #endif
-#ifdef GL_FRAGMENT_PRECISION_HIGH
-precision highp float;
-#else
-precision mediump float;
-#endif
 
 uniform vec2 u_resolution; 
 uniform float u_time;
@@ -68,7 +63,7 @@ float blob(float x,float y,float fx,float fy,float size){
 
 
 void main(void) {
-   vec2 position = (gl_FragCoord.xy / u_resolution.xy )-0.5;
+   vec2 position = gl_FragCoord.xy/u_resolution.xy-0.5;
    position*=vec2(u_resolution.x/u_resolution.y,1.);
    //位移 
    position+=(Noise2D(position*2.+vec2(pow(u_time/4.0,0.2)))-0.5)/10.;
@@ -141,7 +136,7 @@ void main(void) {
    vec4 d = originColor;
    d=min(vec4(1.),d);
    d=max(vec4(0.,0.,0.,0.0),d);
+   d=vec4(vec3(1.,1.,1.)-d.xyz,1.);
 
-
-   gl_FragColor = 1.0-d;
+   gl_FragColor = d;
 }
