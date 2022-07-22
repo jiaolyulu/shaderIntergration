@@ -2,10 +2,9 @@
 precision mediump float;
 #endif
 
-uniform vec2 u_resolution; 
+uniform vec2 resolution; 
 uniform float u_time;
-
-uniform vec2 u_mouse;
+uniform vec2 mousePos;
 float speed=2.0;
 float n=2.0;
 float smoothsteporiginsize=0.5;
@@ -54,8 +53,8 @@ float Noise23D(vec2 uv){
 
 
 float blob(float x,float y,float fx,float fy,float size){
-   float xx = x+abs(u_mouse.x/ u_resolution.x-0.5)*sin(u_time/speed*size+fx)*size*13.;
-   float yy = y+abs(u_mouse.x/ u_resolution.x-0.5)*cos(u_time/speed*size+fy)*size*13.;
+   float xx = x+abs(mousePos.x/ resolution.x-0.5)*sin(u_time/speed*size+fx)*size*13.;
+   float yy = y+abs(mousePos.x/ resolution.x-0.5)*cos(u_time/speed*size+fy)*size*13.;
    float value=xx*xx+yy*yy;
    return min(690.,20.*size/value*(min(15.,u_time)+10.0))/500.;
    //return min(360.,pow(20.0/value,1.0))/30.;
@@ -63,15 +62,17 @@ float blob(float x,float y,float fx,float fy,float size){
 
 
 void main(void) {
-   vec2 position = gl_FragCoord.xy/u_resolution.xy-0.5;
-   position*=vec2(u_resolution.x/u_resolution.y,1.);
+    resolution=u_resolution;
+    mousePos=vec2((sin(u_time*0.2)+1.)*500.,500);
+   vec2 position = gl_FragCoord.xy/resolution.xy-0.5;
+   position*=vec2(resolution.x/resolution.y,1.);
    //位移 
    position+=(Noise2D(position*2.+vec2(pow(u_time/4.0,0.2)))-0.5)/10.;
    //position+=(Noise2D(position*2.+vec2(min(15.,u_time/9))))/10.;
    position*=0.7;
    
-   float mouseX=abs(u_mouse.x/ u_resolution.x-0.5);
-   float mouseY=abs(u_mouse.y/ u_resolution.y);
+   float mouseX=abs(mousePos.x/ resolution.x-0.5);
+   float mouseY=abs(mousePos.y/ resolution.y);
    position*=1.0*pow((1.5-mouseX),2.);
    float x = position.x*2.0;
    float y = position.y*2.0;
